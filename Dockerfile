@@ -1,5 +1,5 @@
-# Use a imagem base oficial do ROS2 Humble
-FROM osrf/ros:humble-desktop
+# Use a imagem base oficial do ROS2 Humble compatível com ARM
+FROM ros:humble-ros-base
 
 # Atualize os pacotes e instale dependências necessárias
 RUN apt-get update && apt-get install -y \
@@ -10,11 +10,6 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     wget \
     && rm -rf /var/lib/apt/lists/*
-
-# Instalar Micro XRCE-DDS
-RUN git clone https://github.com/eProsima/Micro-XRCE-DDS-Client.git /root/Micro-XRCE-DDS-Client
-WORKDIR /root/Micro-XRCE-DDS-Client
-RUN mkdir build && cd build && cmake .. && make && make install
 
 # Configure o ambiente do ROS2
 RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc
@@ -29,15 +24,14 @@ RUN git clone --recursive https://github.com/mrodrigues14/ROS2-T265-PX4.git /roo
 RUN mkdir -p /root/ros2_ws/src && cp -r /root/clone_ws/src/* /root/ros2_ws/src/
 
 # Construa o workspace ROS2
-RUN /bin/bash -c "source /opt/ros/humble/setup.bash"
+RUN /bin/bash -c "source /opt/ros/humble/setup.bash && cd /root/ros2_ws && colcon build && source install/local_setup.bash"
 
-RUN cd ~/ros2_ws/src
+# Copie o script de entrada para o contêiner
+COPY entrypoint.sh /root/entrypoint.sh
+RUN chmod +x /root/entrypoint.sh
 
-RUN colcon build
-
-RUN cd ~/ros2_ws
-
-RUN source install/local_setup.bash
+# Defina o script de entrada
+ENTRYPOINT ["/root/entrypoint.sh"]
 
 # Defina o comando padrão para iniciar um shell
 CMD ["/bin/bash"]

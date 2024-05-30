@@ -1,5 +1,6 @@
 #!/bin/bash
-
+export ROS_DOMAIN_ID=1
+export ROS_LOCALHOST_ONLY=0
 # Nome da imagem Docker
 IMAGE_NAME=ros2_humble_image
 
@@ -21,7 +22,9 @@ docker run -it --rm \
     --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
     --env="XAUTHORITY=$XAUTH" \
     --volume="$XAUTH:$XAUTH" \
-    --volume /dev/:/dev/ \
+    --volume /dev:/dev \
+    --device /dev/ttyAMA0:/dev/ttyAMA0 \
+    --device /dev/ttyS0:/dev/ttyS0 \
     --env="ROS_LOCALHOST_ONLY=0" \
     --env="ROS_DOMAIN_ID=1" \
-    $IMAGE_NAME
+    $IMAGE_NAME ros2 run py_pubsub listener
