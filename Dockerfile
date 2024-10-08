@@ -18,7 +18,7 @@ RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc
 WORKDIR /root/ros2_ws
 
 # Clone o repositório contendo os pacotes ROS
-RUN git clone --recursive https://github.com/mrodrigues14/ROS2-T265-PX4.git /root/clone_ws
+RUN git clone --recurse-submodules https://github.com/mrodrigues14/ROS2-T265-PX4.git /root/clone_ws
 
 # Copie os pacotes ROS para o diretório src do workspace
 RUN mkdir -p /root/ros2_ws/src && cp -r /root/clone_ws/src/* /root/ros2_ws/src/
