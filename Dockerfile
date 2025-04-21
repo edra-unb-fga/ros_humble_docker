@@ -17,13 +17,10 @@ RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc
 # Crie o diretório de trabalho para o workspace ROS2
 WORKDIR /root/ros2_ws
 
-# Clone o repositório contendo os pacotes ROS
-RUN git clone --recurse-submodules https://github.com/mrodrigues14/ROS2-T265-PX4.git /root/clone_ws
+# Crie o diretório src dentro do workspace
+RUN mkdir -p /root/ros2_ws/src
 
-# Copie os pacotes ROS para o diretório src do workspace
-RUN mkdir -p /root/ros2_ws/src && cp -r /root/clone_ws/src/* /root/ros2_ws/src/
-
-# Construa o workspace ROS2
+# Construa o workspace vazio (para já deixar tudo configurado)
 RUN /bin/bash -c "source /opt/ros/humble/setup.bash && cd /root/ros2_ws && colcon build && source install/local_setup.bash"
 
 # Copie o script de entrada para o contêiner
